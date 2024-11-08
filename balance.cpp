@@ -70,11 +70,11 @@ void Balance::PrintBalance(bool asNegative) {
 }
 
 void Balance::Deposit(long long amt) {
-    
+    amount += amt;
 }
 
 void Balance::Withdraw(long long amt) {
-
+    amount -= amt;
 }
 
 void Balance::CompoundMonth(bool incAge) {

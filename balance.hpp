@@ -46,7 +46,7 @@ public:
     // The Whole Shebangs
 
     void TheWholeShebang(long long payments);
-    void AllMonths(unsigned short monthLimit);
+    void AllMonths(unsigned short monthLimit, int verticalOffset);
 };
 
 #endif

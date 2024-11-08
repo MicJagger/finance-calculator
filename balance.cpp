@@ -138,7 +138,7 @@ void Balance::TheWholeShebang(long long payments) {
     std::cout << "Incomplete" << '\n';
 }
 
-void Balance::AllMonths(unsigned short monthLimit) {
+void Balance::AllMonths(unsigned short monthLimit, int verticalOffset) {
     std::vector<long long> paymentAmounts;
     std::vector<long long> totalAmounts;
     long long payment;
@@ -150,16 +150,26 @@ void Balance::AllMonths(unsigned short monthLimit) {
     totalAmounts[0] = amount;
     std::cout << '\n' << "Monthly payments: " << '\n';
     for (int i = 0; i <= monthLimit; i++) {
-        std::cout << "(" << i << ", " << paymentAmounts[i] << ") ";
-        if (i % 16 == 0) {
+        std::cout << "(" << i << ", ";
+        std::cout << std::fixed << std::setprecision(3) << (double)paymentAmounts[i] / 100 / (double)verticalOffset;
+        std::cout << ")";
+        if (i % 12 == 0) {
             std::cout << '\n';
+        }
+        else {
+            std::cout << ", ";
         }
     }
     std::cout << '\n' << "Total amounts: " << '\n';
     for (int i = 0; i <= monthLimit; i++) {
-        std::cout << "(" << i << ", " << totalAmounts[i] << ") ";
-        if (i % 16 == 0) {
+        std::cout << "(" << i << ", ";
+        std::cout << std::fixed << std::setprecision(3) << (double)totalAmounts[i] / 100 / (double)verticalOffset;
+        std::cout << ")";
+        if (i % 12 == 0) {
             std::cout << '\n';
+        }
+        else {
+            std::cout << ", ";
         }
     }
 }

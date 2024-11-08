@@ -44,14 +44,18 @@ void Balance::ResetAge() {
 
 void Balance::PrintInfo() {
     if (amount >= 0) {
-
+        std::cout << "Type: Deposit" << '\n';
+        std::cout << "Amount: $"; 
+        this->PrintBalance(false);
+        std::cout << '\n';
+        std::cout << "Age: " << age << " months" << '\n';
     }
     else {
         std::cout << "Type: Debt" << '\n';
         std::cout << "Amount: $"; 
         this->PrintBalance(false);
         std::cout << '\n';
-        std::cout << "Age: " << age << '\n';
+        std::cout << "Age: " << age << " months" << '\n';
     }
 }
 
@@ -71,4 +75,91 @@ void Balance::Deposit(long long amt) {
 
 void Balance::Withdraw(long long amt) {
 
+}
+
+void Balance::CompoundMonth(bool incAge) {
+    double monthlyInterest = 1 + ((annualInterest / 12) / 100);
+    amount = round(pow((double)amount, monthlyInterest));
+    if (incAge) {
+        age++;
+    }
+}
+
+void Balance::MakeMonthly(long long payment) {
+    this->CompoundMonth(true);
+    amount -= payment;
+}
+
+int Balance::CalculateTime(long long payments) {
+    int time = 0;
+    long long tempAmount = amount;
+    double monthlyInterest = 1 + ((annualInterest / 12) / 100);
+    if (payments <= (double)abs(amount) * (annualInterest / 1200)) {
+        std::cout << "Payment not enough! Must be above ";
+        std::cout << (double)abs(amount) * (annualInterest / 1200);
+        std::cout << " in order to overcome interest" << '\n';
+        return -1;
+    }
+    while (true) {
+        tempAmount = round(pow((double)amount, monthlyInterest));
+        tempAmount += payments;
+        time++;
+        if (tempAmount <= 0) {
+            return time;
+        }
+    }
+}
+
+long long Balance::CalculateMonthly(unsigned int months) {
+    // thanks to 
+    // https://www.bankrate.com/mortgages/mortgage-calculator/#calculate-mortgage-payment
+    // for the formula
+    if (months == 0) {
+        return amount;
+    }
+    double monthlyRate = ((annualInterest / 12) / 100);
+    double compounded = pow(1 + monthlyRate, months);
+    double temp = compounded - 1;
+    temp = monthlyRate * compounded / temp;
+    return round((double)abs(amount) * temp);
+}
+
+long long Balance::CalculateTotalCost(unsigned int months) {
+    return this->CalculateMonthly(months) * months;
+}
+
+void Balance::TheWholeShebang(long long payments) {
+    if ((double)abs(amount) * (annualInterest / 1200) >= payments) {
+        std::cout << "Payment not enough! Must be above ";
+        std::cout << (double)abs(amount) * (annualInterest / 1200);
+        std::cout << " in order to overcome interest" << '\n';
+        return;
+    }
+    std::cout << "Incomplete" << '\n';
+}
+
+void Balance::AllMonths(unsigned short monthLimit) {
+    std::vector<long long> paymentAmounts;
+    std::vector<long long> totalAmounts;
+    long long payment;
+    for (int i = 0; i <= monthLimit; i++) {
+        payment = this->CalculateMonthly(i);
+        paymentAmounts.push_back(payment);
+        totalAmounts.push_back(payment * i);
+    }
+    totalAmounts[0] = amount;
+    std::cout << '\n' << "Monthly payments: " << '\n';
+    for (int i = 0; i <= monthLimit; i++) {
+        std::cout << "(" << i << ", " << paymentAmounts[i] << ") ";
+        if (i % 16 == 0) {
+            std::cout << '\n';
+        }
+    }
+    std::cout << '\n' << "Total amounts: " << '\n';
+    for (int i = 0; i <= monthLimit; i++) {
+        std::cout << "(" << i << ", " << totalAmounts[i] << ") ";
+        if (i % 16 == 0) {
+            std::cout << '\n';
+        }
+    }
 }
